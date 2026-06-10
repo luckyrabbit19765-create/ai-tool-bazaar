@@ -1,4 +1,6 @@
-const BASE = "/api/auth"
+const BASE = import.meta.env.PROD
+  ? "https://ai-tool-bazaar.onrender.com/api/auth"
+  : "/api/auth"
 
 export async function loginAPI({ username, password }) {
   const res = await fetch(`${BASE}/login`, {

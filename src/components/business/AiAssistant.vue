@@ -29,7 +29,8 @@ async function send() {
   scrollDown()
 
   try {
-    const res = await fetch("/api/ai/chat", {
+    const apiBase = import.meta.env.PROD ? "https://ai-tool-bazaar.onrender.com" : ""
+    const res = await fetch(`${apiBase}/api/ai/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId: currentUser.value?.id || 0, message: text })

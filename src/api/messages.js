@@ -1,4 +1,6 @@
-const BASE = "/api/messages"
+const BASE = import.meta.env.PROD
+  ? "https://ai-tool-bazaar.onrender.com/api/messages"
+  : "/api/messages"
 
 export async function sendMessage(payload) {
   const res = await fetch(BASE, {
