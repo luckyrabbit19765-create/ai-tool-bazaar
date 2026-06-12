@@ -6,8 +6,11 @@ import SearchFilter from "../components/business/SearchFilter.vue"
 import ToolCard from "../components/common/ToolCard.vue"
 import Pagination from "../components/common/Pagination.vue"
 import EmptyState from "../components/common/EmptyState.vue"
+import ParticleBackground from "../components/business/ParticleBackground.vue"
+import ScrollReveal from "../components/common/ScrollReveal.vue"
 import { useMarketplace } from "../composables/useMarketplace"
 import { useToolHub } from "../composables/useToolHub"
+import { useCountUp } from "../composables/useCountUp"
 
 const {
   keyword,
@@ -28,15 +31,15 @@ const paginatedTools = computed(() => {
   return filteredTools.value.slice(start, start + pageSize)
 })
 
-const marketStats = computed(() => {
+const rawStats = computed(() => {
   const authors = new Set(catalog.value.map((t) => t.author))
   const totalSales = catalog.value.reduce((sum, t) => sum + (t.sales || 0), 0)
-  return [
-    { label: "已上架工具", value: catalog.value.length },
-    { label: "活跃创作者", value: authors.size },
-    { label: "累计销量", value: totalSales > 999 ? (totalSales / 1000).toFixed(1) + "k" : totalSales }
-  ]
+  return { tools: catalog.value.length, authors: authors.size, sales: totalSales }
 })
+
+const toolsCount = useCountUp(computed(() => rawStats.value.tools), 1500)
+const authorsCount = useCountUp(computed(() => rawStats.value.authors), 1800)
+const salesCount = useCountUp(computed(() => rawStats.value.sales), 2000)
 
 const features = [
   { icon: "🔍", title: "智能发现", desc: "关键词搜索 + 分类筛选 + 多维度排序，快速定位你需要的 AI 工具" },
@@ -69,7 +72,8 @@ function applyCategory(value) {
 <template>
   <main class="home-page">
     <section class="hero">
-      <div class="page-shell page-shell--hero hero-market">
+      <ParticleBackground />
+      <div class="page-shell page-shell--hero hero-market" style="position:relative;z-index:1">
         <div class="hero-market__intro">
           <p class="eyebrow">Marketplace Home</p>
           <h1>发现、购买、发布 AI 工具</h1>
@@ -131,9 +135,17 @@ function applyCategory(value) {
 
         <div class="hero-market__footer">
           <div class="hero-stats">
-            <article v-for="item in marketStats" :key="item.label" class="stat-card">
-              <strong>{{ item.value }}</strong>
-              <span>{{ item.label }}</span>
+            <article class="stat-card">
+              <strong>{{ toolsCount }}</strong>
+              <span>已上架工具</span>
+            </article>
+            <article class="stat-card">
+              <strong>{{ authorsCount }}</strong>
+              <span>活跃创作者</span>
+            </article>
+            <article class="stat-card">
+              <strong>{{ salesCount }}</strong>
+              <span>累计销量</span>
             </article>
           </div>
 
@@ -148,10 +160,13 @@ function applyCategory(value) {
       </div>
     </section>
 
-    <section class="page-shell page-shell--wide">
-      <BannerSwiper :featured-tools="featuredTools" />
-    </section>
+    <ScrollReveal>
+      <section class="page-shell page-shell--wide">
+        <BannerSwiper :featured-tools="featuredTools" />
+      </section>
+    </ScrollReveal>
 
+    <ScrollReveal>
     <section class="page-shell page-shell--wide" id="catalog">
       <SearchFilter
         :keyword="keyword"
@@ -197,8 +212,10 @@ function applyCategory(value) {
         @update:current="currentPage = $event"
       />
     </section>
+    </ScrollReveal>
 
     <!-- 平台优势 -->
+    <ScrollReveal>
     <section class="home-enterprise">
       <div class="page-shell page-shell--wide">
         <div class="home-enterprise__head">
@@ -223,5 +240,6 @@ function applyCategory(value) {
         </div>
       </div>
     </section>
+    </ScrollReveal>
   </main>
 </template>

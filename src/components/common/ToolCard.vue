@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from "vue"
+import { computed, reactive, ref } from "vue"
 import { RouterLink } from "vue-router"
 
 const props = defineProps({
@@ -8,6 +8,26 @@ const props = defineProps({
     required: true
   }
 })
+
+const cardRef = ref(null)
+const tilt = reactive({ rx: 0, ry: 0, glowX: 50, glowY: 50, active: false })
+
+function onMove(e) {
+  const el = cardRef.value
+  if (!el) return
+  const rect = el.getBoundingClientRect()
+  const x = e.clientX - rect.left
+  const y = e.clientY - rect.top
+  tilt.rx = ((y - rect.height / 2) / (rect.height / 2)) * -6
+  tilt.ry = ((x - rect.width / 2) / (rect.width / 2)) * 6
+  tilt.glowX = (x / rect.width) * 100
+  tilt.glowY = (y / rect.height) * 100
+  tilt.active = true
+}
+
+function onLeave() {
+  tilt.rx = 0; tilt.ry = 0; tilt.active = false
+}
 
 const accentClassMap = {
   sunrise: "accent-sunrise",
@@ -23,7 +43,16 @@ const categoryEmoji = computed(() => {
 </script>
 
 <template>
-  <article class="tool-card">
+  <article
+    ref="cardRef"
+    class="tool-card"
+    :class="{ 'tool-card--tilted': tilt.active }"
+    :style="tilt.active
+      ? { transform: `perspective(700px) rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)`, transition: 'transform 0.1s ease-out, box-shadow 0.2s ease' }
+      : { transform: 'perspective(700px) rotateX(0) rotateY(0)', transition: 'transform 0.5s ease-out' }"
+    @mousemove="onMove"
+    @mouseleave="onLeave"
+  >
     <RouterLink
       class="tool-card__link"
       :to="`/tool/${props.tool.id}`"
