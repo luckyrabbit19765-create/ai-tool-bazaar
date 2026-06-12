@@ -11,12 +11,14 @@ onMounted(() => {
 
   let w, h
   const particles = []
-  const maxDist = 140
-  const count = 60
+  const maxDist = 180
+  const count = 80
+  const baseColor = [45, 140, 130]
+  const accentColor = [122, 185, 219]
 
   function resize() {
-    w = canvas.width = canvas.offsetWidth
-    h = canvas.height = canvas.offsetHeight
+    w = canvas.width = window.innerWidth
+    h = canvas.height = window.innerHeight
   }
   resize()
   window.addEventListener("resize", resize)
@@ -25,9 +27,10 @@ onMounted(() => {
     particles.push({
       x: Math.random() * w,
       y: Math.random() * h,
-      vx: (Math.random() - 0.5) * 0.6,
-      vy: (Math.random() - 0.5) * 0.6,
-      r: Math.random() * 1.8 + 0.6
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: (Math.random() - 0.5) * 0.5,
+      r: Math.random() * 2.5 + 1.5,
+      color: Math.random() < 0.7 ? baseColor : accentColor
     })
   }
 
@@ -37,14 +40,24 @@ onMounted(() => {
     for (const p of particles) {
       p.x += p.vx
       p.y += p.vy
-      if (p.x < 0) p.x = w
-      if (p.x > w) p.x = 0
-      if (p.y < 0) p.y = h
-      if (p.y > h) p.y = 0
+      if (p.x < -50) p.x = w + 50
+      if (p.x > w + 50) p.x = -50
+      if (p.y < -50) p.y = h + 50
+      if (p.y > h + 50) p.y = -50
 
+      // 外发光
+      const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4)
+      gradient.addColorStop(0, `rgba(${p.color.join(",")},0.35)`)
+      gradient.addColorStop(1, "transparent")
+      ctx.beginPath()
+      ctx.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2)
+      ctx.fillStyle = gradient
+      ctx.fill()
+
+      // 核心
       ctx.beginPath()
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-      ctx.fillStyle = "rgba(45,140,130,0.6)"
+      ctx.fillStyle = `rgba(${p.color.join(",")},0.7)`
       ctx.fill()
     }
 
@@ -54,12 +67,12 @@ onMounted(() => {
         const dy = particles[i].y - particles[j].y
         const dist = Math.sqrt(dx * dx + dy * dy)
         if (dist < maxDist) {
-          const alpha = 1 - dist / maxDist
+          const alpha = (1 - dist / maxDist) * 0.2
           ctx.beginPath()
           ctx.moveTo(particles[i].x, particles[i].y)
           ctx.lineTo(particles[j].x, particles[j].y)
-          ctx.strokeStyle = `rgba(45,140,130,${alpha * 0.25})`
-          ctx.lineWidth = 0.5
+          ctx.strokeStyle = `rgba(45,140,130,${alpha})`
+          ctx.lineWidth = 0.6
           ctx.stroke()
         }
       }
@@ -81,10 +94,10 @@ onMounted(() => {
 
 <style scoped>
 .particle-bg {
-  position: absolute;
+  position: fixed;
   inset: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   pointer-events: none;
   z-index: 0;
 }
