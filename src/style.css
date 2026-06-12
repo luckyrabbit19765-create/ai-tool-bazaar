@@ -1140,8 +1140,32 @@ h3 {
   position: relative;
   overflow: hidden;
   background:
+    /* 光斑 */
     radial-gradient(ellipse at 15% 20%, rgba(139,215,201,0.12), transparent 50%),
-    radial-gradient(ellipse at 85% 60%, rgba(168,213,239,0.1), transparent 50%);
+    radial-gradient(ellipse at 85% 60%, rgba(168,213,239,0.1), transparent 50%),
+    /* 点阵网格 - 可见的圆点 */
+    radial-gradient(circle at center, rgba(45,140,130,0.1) 1.2px, transparent 1.2px),
+    linear-gradient(180deg, #f7fcfd 0%, #eef8fb 100%);
+  background-size:
+    100% 100%, 100% 100%,
+    44px 44px, 100% 100%;
+  background-position:
+    0 0, 0 0,
+    22px 22px, 0 0;
+}
+
+/* Hero 装饰电路线 */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.15;
+  background:
+    linear-gradient(135deg, transparent 30%, rgba(45,140,130,0.3) 30.5%, transparent 31%) 0 0 / 200px 200px,
+    linear-gradient(-45deg, transparent 20%, rgba(122,185,219,0.25) 20.5%, transparent 21%) 100px 50px / 180px 180px,
+    linear-gradient(160deg, transparent 40%, rgba(45,140,130,0.2) 40.5%, transparent 41%) -50px 80px / 220px 220px;
 }
 
 .hero-grid {
