@@ -60,9 +60,7 @@ const categoryEmoji = computed(() => {
           <strong>￥{{ props.tool.price }}</strong>
           <span class="tool-card__rating">★ {{ props.tool.rating }}</span>
         </div>
-        <RouterLink class="card-button" :to="`/tool/${props.tool.id}`">
-          查看详情
-        </RouterLink>
+        <span class="card-button">查看详情</span>
       </div>
     </div>
   </article>

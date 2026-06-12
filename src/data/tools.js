@@ -312,13 +312,3 @@ export const tools = [
     delivery: "CI 配置文件 + 部署说明"
   }
 ]
-
-export function getToolById(id) {
-  return tools.find((tool) => tool.id === Number(id)) ?? null
-}
-
-export function getRelatedTools(currentToolId, category, limit = 3) {
-  return tools
-    .filter((tool) => tool.id !== currentToolId && tool.category === category)
-    .slice(0, limit)
-}

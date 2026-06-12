@@ -1,10 +1,11 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref, watch } from "vue"
-import { RouterLink } from "vue-router"
+import { RouterLink, useRouter } from "vue-router"
 import { useUserSession } from "../../composables/useUserSession"
 import { useToolHub } from "../../composables/useToolHub"
 import { useUnread } from "../../composables/useUnread"
 
+const router = useRouter()
 const { currentUser, isLoggedIn, isAdmin, logout } = useUserSession()
 const { cartTools } = useToolHub()
 const { unreadCount, fetchUnread } = useUnread()
@@ -16,8 +17,10 @@ let pollTimer = null
 onMounted(() => {
   if (currentUser.value?.id) fetchUnread(currentUser.value.id)
   pollTimer = setInterval(() => {
-    if (currentUser.value?.id) fetchUnread(currentUser.value.id)
-  }, 5000)
+    if (document.visibilityState === "visible" && currentUser.value?.id) {
+      fetchUnread(currentUser.value.id)
+    }
+  }, 30000)
 })
 
 onUnmounted(() => clearInterval(pollTimer))
@@ -47,7 +50,7 @@ function closeDropdown() {
 function handleLogout() {
   showDropdown.value = false
   logout()
-  window.location.href = "/"
+  router.push("/")
 }
 </script>
 
@@ -93,11 +96,19 @@ function handleLogout() {
           @mouseenter="openDropdown"
           @mouseleave="closeDropdown"
         >
-          <button class="header-user__avatar" :class="{ 'header-user__avatar--open': showDropdown }">
+          <button
+            class="header-user__avatar"
+            :class="{ 'header-user__avatar--open': showDropdown }"
+            :aria-expanded="showDropdown"
+            aria-haspopup="menu"
+            @click="showDropdown = !showDropdown"
+            @keydown.escape="showDropdown = false"
+            @blur="closeDropdown"
+          >
             {{ userInitial }}
           </button>
 
-          <div v-if="showDropdown" class="header-user__dropdown" @mouseenter="openDropdown">
+          <div v-if="showDropdown" class="header-user__dropdown" role="menu" @mouseenter="openDropdown">
             <div class="header-user__dropdown-head">
               <span class="header-user__dropdown-avatar">{{ userInitial }}</span>
               <div>

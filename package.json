@@ -12,6 +12,8 @@
     "server:seed": "npm --prefix server run seed"
   },
   "dependencies": {
+    "docx": "^9.7.1",
+    "playwright": "^1.60.0",
     "vue": "^3.5.16",
     "vue-router": "^4.5.1"
   },

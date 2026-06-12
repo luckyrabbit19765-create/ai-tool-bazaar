@@ -1,12 +1,13 @@
 <script setup>
 import { computed, ref } from "vue"
-import { RouterLink } from "vue-router"
+import { RouterLink, useRouter } from "vue-router"
 import ToolCard from "../components/common/ToolCard.vue"
 import Pagination from "../components/common/Pagination.vue"
 import EmptyState from "../components/common/EmptyState.vue"
 import { useToolHub } from "../composables/useToolHub"
 import { useUserSession } from "../composables/useUserSession"
 
+const router = useRouter()
 const {
   stats,
   publishedTools,
@@ -52,16 +53,6 @@ const activeLabel = computed(() =>
   sidebarNav.find((n) => n.key === currentTab.value)?.label ?? ""
 )
 
-const activePanelComponent = computed(() => {
-  const panels = {
-    published: "section",
-    purchased: "section",
-    collected: "section"
-  }
-
-  return panels[currentTab.value] ?? "section"
-})
-
 function switchTab(key) {
   currentTab.value = key
   currentPage.value = 1
@@ -75,7 +66,7 @@ function removeTool(id) {
 
 function handleLogout() {
   logout()
-  window.location.href = "/"
+  router.push("/")
 }
 </script>
 
@@ -129,7 +120,7 @@ function handleLogout() {
         </div>
       </div>
 
-      <component :is="activePanelComponent" v-if="currentTools.length" class="tool-grid">
+      <section v-if="currentTools.length" class="tool-grid">
         <article
           v-for="tool in paginatedTools"
           :key="tool.id"
@@ -141,7 +132,7 @@ function handleLogout() {
             <button class="ghost-button profile-tool-delete" @click="removeTool(tool.id)">删除</button>
           </div>
         </article>
-      </component>
+      </section>
 
       <EmptyState
         v-else-if="!searchQuery.trim()"
