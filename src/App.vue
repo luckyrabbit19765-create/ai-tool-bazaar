@@ -5,7 +5,6 @@ import LaunchCover from "./components/business/LaunchCover.vue"
 import LayoutHeader from "./components/common/LayoutHeader.vue"
 import LayoutFooter from "./components/common/LayoutFooter.vue"
 import AiAssistant from "./components/business/AiAssistant.vue"
-import ParticleBackground from "./components/business/ParticleBackground.vue"
 
 const isCoverVisible = ref(true)
 
@@ -16,7 +15,6 @@ const appShellClass = computed(() => ({
 
 <template>
   <div class="app-shell" :class="appShellClass">
-    <ParticleBackground />
     <div class="app-content" :class="{ 'app-content--locked': isCoverVisible }">
       <LayoutHeader />
       <RouterView />

@@ -6,6 +6,7 @@ import SearchFilter from "../components/business/SearchFilter.vue"
 import ToolCard from "../components/common/ToolCard.vue"
 import Pagination from "../components/common/Pagination.vue"
 import EmptyState from "../components/common/EmptyState.vue"
+import ParticleBackground from "../components/business/ParticleBackground.vue"
 import FloatingOrbs from "../components/business/FloatingOrbs.vue"
 import ScrollReveal from "../components/common/ScrollReveal.vue"
 import { useMarketplace } from "../composables/useMarketplace"
@@ -72,6 +73,7 @@ function applyCategory(value) {
 <template>
   <main class="home-page">
     <section class="hero">
+      <ParticleBackground />
       <FloatingOrbs />
       <div class="page-shell page-shell--hero hero-market" style="position:relative;z-index:1">
         <div class="hero-market__intro">
